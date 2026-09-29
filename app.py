@@ -3,16 +3,20 @@ import boto3
 import pymysql
 
 app = Flask(__name__)
+import os
 
-bucket_name="student-photo-demo-gopu"
+bucket_name = os.environ.get("S3_BUCKET_NAME")
 
-db=pymysql.connect(
-host="100.57.165.48",
-port="3306",
-user="admin",
-password="Admin123",
-database="studentdb"
+
+
+db = pymysql.connect(
+    host=os.environ.get("DB_HOST"),
+    user=os.environ.get("DB_USER"),
+    password=os.environ.get("DB_PASSWORD"),
+    database=os.environ.get("DB_NAME", "studentdb")
 )
+
+
 
 @app.route('/')
 def home():
@@ -28,7 +32,6 @@ def register():
     photo=request.files['photo']
 
     s3=boto3.client('s3')
-
     s3.upload_fileobj(
         photo,
         bucket_name,
@@ -59,3 +62,4 @@ if __name__=="__main__":
         host="0.0.0.0",
         port=5000
     )
+
